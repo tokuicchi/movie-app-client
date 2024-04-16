@@ -4,7 +4,7 @@ import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
-import { CardActionArea, CardMedia, Typography } from '@mui/material';
+import { CardActionArea, CardMedia, Typography, Link } from '@mui/material';
 
 const Home = () => {
     const[movies,setMovies] = useState([]);
@@ -59,15 +59,16 @@ const Home = () => {
             >
                 {movies.map((movie) => (
                     <SwiperSlide key={movie.id}>
-                        <CardMedia 
-                            component={"img"}
-                            sx={{
-                                aspectRation: '2/3'
-                            }}
-                            image={`https://image.tmdb.org/t/p/original${movie.poster_path}`}
-                            alt={movie.title}
-                        />
-
+                        <Link href={`detail/movie/${movie.id}`}>
+                            <CardMedia 
+                                component={"img"}
+                                sx={{
+                                    aspectRation: '2/3'
+                                }}
+                                image={`https://image.tmdb.org/t/p/original${movie.poster_path}`}
+                                alt={movie.title}
+                            />
+                        </Link>
                         <Typography>
                             公開日：{movie.release_date}
                         </Typography>
@@ -75,15 +76,6 @@ const Home = () => {
                 ))}
             </Swiper>
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6 bg-white border-b border-gray-200">
-                            You're logged in!
-                        </div>
-                    </div>
-                </div>
-            </div>
         </AppLayout>
     )
 }
