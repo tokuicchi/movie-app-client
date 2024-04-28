@@ -1,11 +1,70 @@
 import AppLayout from '@/components/Layouts/AppLayout'
 import Head from 'next/head'
-import { Box, Container, Grid, Typography } from '@mui/material';
+import { Box, Card, CardContent, Container, Grid, Rating, Typography } from '@mui/material';
 import axios from 'axios'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import laravelAxios from '@/lib/laravelAxios';
 
-const Detail = ({detail,media_type}) => {
+const Detail = ({detail, media_type, media_id}) => {
   console.log(detail);
+
+  // const reviews = [
+  //   {
+  //     id: 1,
+  //     content: "おもしろい",
+  //     rating: 4,
+  //     user: {
+  //       name: "山田花子"
+  //     }
+  //   },
+  //   {
+  //     id: 2,
+  //     content: "ひどい",
+  //     rating: 1,
+  //     user: {
+  //       name: "テスト太郎"
+  //     }
+  //   },
+  //   {
+  //     id: 3,
+  //     content: "おもんない",
+  //     rating: 3,
+  //     user: {
+  //       name: "ひどい太郎"
+  //     }
+  //   },
+  //   {
+  //     id: 4,
+  //     content: "さいあく",
+  //     rating: 1,
+  //     user: {
+  //       name: "最悪花子"
+  //     }
+  //   },
+  //   {
+  //     id: 5,
+  //     content: "最高",
+  //     rating: 5,
+  //     user: {
+  //       name: "最高花子"
+  //     }
+  //   }
+  // ];
+
+  const[reviews,SetReviews] = useState([]);
+
+  useEffect(()=> {
+    const fetchReviews = async() => {
+      try {
+        const response = await laravelAxios.get(`api/reviews/${media_type}/${media_id}`);
+        console.log(response.data);
+        SetReviews(response.data);
+      } catch(err) {
+        console.log(err);
+      }
+    }
+    fetchReviews();
+  }, [media_type, media_id])
 
   return (
     <AppLayout
@@ -17,6 +76,7 @@ const Detail = ({detail,media_type}) => {
             <Head>
                 <title>Laravel - Detail</title>
             </Head>
+    {/* 映画情報 start */}
     <Box
       sx={{
         height: { xs: "auto", md: "70vh"}, bgcolor: "red", position: "relative", display: "flex", alignItems: "center"
@@ -63,6 +123,48 @@ const Detail = ({detail,media_type}) => {
         </Grid>
       </Container>
     </Box>
+    {/* 映画情報 end */}
+
+    {/* レビュー内容表示 */}
+    <Container sx={{py: 4}}>
+      <Typography
+        component={"h1"}
+        variant='h4'
+        align='center'
+        gutterBottom
+      >レビュー一覧</Typography>
+
+      <Grid container spacing={3}>
+        {reviews.map((review) => (
+          <Grid item xs={12}  key={review.id}>
+            <Card>
+              <CardContent>
+                <Typography
+                  variant='h6'
+                  component={"div"}
+                  gutterBottom
+                >
+                  {review.user.name}
+                </Typography>
+
+                <Rating 
+                  value={review.rating}
+                  readOnly
+                />
+
+                <Typography
+                  variant='body2'
+                  color="textSecondary"
+                  paragraph
+                >
+                  {review.content}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+    </Container>
     </AppLayout>
   )
 }
